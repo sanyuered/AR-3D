@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="Cache-Control" content="no-cache">
+      <meta http-equiv="Pragram" content="no-cache">
+      <meta http-equiv="Expires" content="0">
+      <title>3D Viewer</title>
+      <link rel="stylesheet" href="../../style/weui.css">
+      <link rel="stylesheet" href="../../style/app.css">
+      <link rel="stylesheet" href="camera.css?v2">
+</head>
+
+<body>
+      <div id="app" class="page">
+            <div class="videoPlayer">
+                  <video id="inputData" autoplay muted playsinline webkit-playsinline class="camera">
+                  </video>
+                  <canvas id="canvasWebGL" class="canvasWebGL">
+                  </canvas>
+            </div>
+            <div class="cover-view">
+                  <div>A glb model:</div>
+                  <input id="uploaderInput" type="file">
+                  <a href="javascript:" class="weui-btn weui-btn_primary" v-on:click="takePhoto">Start Camera</a>
+                  <a href="javascript:" class="weui-btn marginTop10" v-bind:class="{'weui-btn_default':!isDeviceMotion}"
+                        v-on:click="toggleDeviceMotion" v-text="toggleDeviceMotion_text"></a>
+                  <div v-text="notice"></div>
+            </div>
+      </div>
+
+      <!-- 3D -->
+      <script src="../../third_party/three.js"></script>
+      <script src="../../third_party/GLTFLoader.js"></script>
+      <!-- vue -->
+      <script src="../../third_party/vue.min.js"></script>
+      <script type="module" src="camera.js?v2"></script>
+</body>
+
+</html>
