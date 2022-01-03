@@ -4,6 +4,7 @@
 
 | Date　　　| Update |
 | -- | -- |
+| 2022-01-02 | New: Gamma color space correction. |
 | 2021-07-21 | New: This project is the same as https://github.com/sanyuered/WeChat-MiniProgram-AR-3D, but it is a pure front-end website. |
 
 ## Visit a live example

@@ -54,6 +54,10 @@ function initScene(canvas_webgl) {
     renderer.setPixelRatio(devicePixelRatio);
     renderer.setSize(canvasWidth, canvasHeight);
 
+    // gamma色彩空间校正，以适应人眼对亮度的感觉。
+    renderer.gammaOutput = true
+    renderer.gammaFactor = 2.2
+
     animate();
 
 }
@@ -204,7 +208,7 @@ function deviceorientation_callback(event) {
 }
 
 function startDeviceMotion() {
-    if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) { 
+    if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
         // for iOS
         window.DeviceOrientationEvent.requestPermission()
             .then(function (state) {
