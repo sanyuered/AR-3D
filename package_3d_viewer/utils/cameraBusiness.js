@@ -55,9 +55,12 @@ function initScene(canvas_webgl) {
     renderer.setSize(canvasWidth, canvasHeight);
 
     // gamma色彩空间校正，以适应人眼对亮度的感觉。
+    /*
     renderer.gammaOutput = true
     renderer.gammaFactor = 2.2
-
+    */
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    
     animate();
 
 }
@@ -128,8 +131,6 @@ function animate() {
             deviceOrientationControl.deviceControl(camera, device, THREE);
         }
     }
-
-
     // render for Perspective Camera
     renderer.render(scene, camera);
 }
@@ -161,6 +162,7 @@ function onTouchmove(event) {
 }
 
 function onMousedown(event) {
+    console.log('onMousedown',event.button)
     if (event.button != 0) {
         return;
     }
@@ -195,6 +197,7 @@ function onMousemove(event) {
 }
 
 function onMouseup(event) {
+    console.log('onMouseup',event.button)
     if (event.button != 0) {
         return;
     }

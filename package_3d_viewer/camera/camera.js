@@ -82,6 +82,7 @@ var app = new Vue({
       canvasWebGL.addEventListener("mouseup", function (event) {
         cameraBusiness.onMouseup(event);
       })
+
     },
   },
   mounted: function () {

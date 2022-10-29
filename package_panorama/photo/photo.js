@@ -1,4 +1,4 @@
-import * as photoBusiness from '../utils/photoBusiness.js'
+import * as photoBusiness from '../utils/photoBusiness.js?v4'
 // canvas id
 const canvasId = 'canvasWebGL';
 // A panorama image url
@@ -48,6 +48,8 @@ var app = new Vue({
       canvasWebGL.addEventListener("touchmove", function (event) {
         photoBusiness.onTouchmove(event);
       })
+
+      // mouse event
       canvasWebGL.addEventListener("mousedown", function (event) {
         // if mouse down, stop Device Motion.
         _that.stopDeviceMotion();
@@ -79,5 +81,4 @@ document.getElementById("uploaderInput").addEventListener("change", function (e)
   
   photoBusiness.updatePanorama(src,-90);
 });
-
 

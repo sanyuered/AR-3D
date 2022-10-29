@@ -7,7 +7,10 @@ var isDeviceMotion = false;
 var last_lon, last_lat, last_device = {};
 var canvasWidth, canvasHeight;
 var isMouseDown = false;
-const mouseMoveSpeed = 0.6;
+const mouseMoveSpeed = 0.3;
+var touchStart = { a: null, b: null }
+var touchMove = { a: null, b: null }
+var timeoutId
 
 function initThree(canvasId,
     imageUrl,
@@ -42,7 +45,7 @@ function initScene(canvas_webgl) {
     console.log('device pixel ratio', devicePixelRatio);
     renderer.setPixelRatio(devicePixelRatio);
     renderer.setSize(canvasWidth, canvasHeight);
-
+    
     animate();
 
 }
@@ -68,6 +71,9 @@ function updatePanorama(imageUrl, deg) {
     mainModel.material.map = texture1;
     // the rotation Y of the model 
     mainModel.rotation.set(0, THREE.Math.degToRad(deg), 0);
+
+    camera.fov = 75;
+    camera.updateProjectionMatrix();
 }
 
 function animate() {
@@ -102,28 +108,73 @@ function animate() {
 }
 
 function onTouchstart(event) {
-    var touch = event.touches[0];
-    if (!touch) {
-        return;
+    if (event.touches.length === 2) {
+        touchStart.a = event.touches[0]
+        touchStart.b = event.touches[1]
+
+    } else {
+        var touch = event.touches[0];
+        if (!touch) {
+            return;
+        }
+        touchX = touch.pageX;
+        touchY = touch.pageY;
     }
-    touchX = touch.pageX;
-    touchY = touch.pageY;
+}
+
+function calcDistance() {
+    var x2 = touchMove.b.pageX - touchMove.a.pageX
+    var y2 = touchMove.b.pageY - touchMove.a.pageY
+
+    var x1 = touchStart.b.pageX - touchStart.a.pageX
+    var y1 = touchStart.b.pageY - touchStart.a.pageY
+
+    var scale = (x2 * x2 + y2 * y2) / (x1 * x1 + y1 * y1)
+    var deltaY = 0
+
+    if (scale > 1) {
+        deltaY = -125
+    }
+    else if (scale < 1) {
+        deltaY = 125
+    }
+
+    if (deltaY) {
+        const fov = camera.fov + deltaY * 0.05;
+        camera.fov = THREE.MathUtils.clamp(fov, 40, 100);
+        camera.updateProjectionMatrix();
+    }
 }
 
 function onTouchmove(event) {
-    var touch = event.touches[0];
-    if (!touch) {
-        return;
+    if (event.touches.length === 2) {
+        touchMove.a = event.touches[0]
+        touchMove.b = event.touches[1]
+
+        if (timeoutId) {
+            clearTimeout(timeoutId)
+        }
+
+        timeoutId = setTimeout(function () {
+            calcDistance()
+        }, 150)
+
+    } else {
+        var touch = event.touches[0];
+        if (!touch) {
+            return;
+        }
+
+        // var moveX = touch.pageX - touchX;
+        var moveX = touchX - touch.pageX;
+        var moveY = touch.pageY - touchY;
+        lon += moveX;
+        lat += moveY;
+
+        touchX = touch.pageX;
+        touchY = touch.pageY;
+        gradient = Math.abs(moveX / moveY);
     }
-
-    var moveX = touch.pageX - touchX;
-    var moveY = touch.pageY - touchY;
-    lon += moveX;
-    lat += moveY;
-
-    touchX = touch.pageX;
-    touchY = touch.pageY;
-    gradient = Math.abs(moveX / moveY);
 }
 
 function onMousedown(event) {
@@ -151,7 +202,8 @@ function onMousemove(event) {
         return;
     }
 
-    var moveX = touch.pageX - touchX;
+    // var moveX = touch.pageX - touchX;
+    var moveX = touchX - touch.pageX;
     var moveY = touch.pageY - touchY;
     lon += moveX * mouseMoveSpeed;
     lat += moveY * mouseMoveSpeed;
@@ -173,7 +225,7 @@ function deviceorientation_callback(event) {
 }
 
 function startDeviceMotion() {
-    if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) { 
+    if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
         // for iOS
         window.DeviceOrientationEvent.requestPermission()
             .then(function (state) {
@@ -202,6 +254,17 @@ window.addEventListener("resize", function () {
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
 })
+
+document.addEventListener('wheel', function (event) {
+    if (!camera) {
+        return
+    }
+
+    const fov = camera.fov + event.deltaY * 0.05;
+    camera.fov = THREE.MathUtils.clamp(fov, 40, 100);
+    camera.updateProjectionMatrix();
+})
+
 
 export {
     initThree,
