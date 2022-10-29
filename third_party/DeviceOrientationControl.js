@@ -2,6 +2,7 @@ const alphaOffset = 0;
 // 90:landscape, 0: portrait
 const screenOrientation = 0;
 var phi = 0, theta = 0;
+const sphereRadius = 500
 
 // for package_3d_viewer
 function modelRotationControl(model, lon, lat, gradient, THREE) {
@@ -29,9 +30,9 @@ function camaraRotationControl(camera, lon, lat, THREE) {
     phi = THREE.Math.degToRad(90 - lat);
     theta = THREE.Math.degToRad(lon);
     var target = new THREE.Vector3();
-    target.x = Math.sin(phi) * Math.cos(theta);
-    target.y = Math.cos(phi);
-    target.z = Math.sin(phi) * Math.sin(theta);
+    target.x = sphereRadius * Math.sin(phi) * Math.cos(theta);
+    target.y = sphereRadius * Math.cos(phi);
+    target.z = sphereRadius * Math.sin(phi) * Math.sin(theta);
 
     // set rotation of model 
     camera.lookAt(target);
